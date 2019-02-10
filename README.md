@@ -106,5 +106,9 @@ $ helmenv uninstall 0.7.0
 The version v2.12.3 is uninstalled!
 ```
 
+## Related Projects
+There's a similar project for managing [kubectl
+versions](https://github.com/alexppg/kbenv).
+
 ## License
 GPL3
