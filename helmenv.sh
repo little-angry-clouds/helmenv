@@ -33,10 +33,10 @@ function _helmenv_get_so_and_arch(){
         *)      architecture="UNKNOWN:${_arch}"
     esac
 
-    if [[ "$machine" = "darwin" && "$architecture" != "amd64" ]]
+    if [[ "$machine" == "darwin" ]]
     then
-        echo "Mac only supports amd64..."
-        return 1
+        echo "$machine-amd64"
+        return 0
     fi
 
     echo "$machine-$architecture"
@@ -86,7 +86,7 @@ function helmenv_install () {
 
     mkdir -p /tmp/helm
     tar -zxf "/tmp/helm-$VERSION.tar.gz" -C /tmp/helm
-    mv /tmp/helm/linux-amd64/helm "$HELM_BINARY_PATH/helm-$VERSION"
+    mv /tmp/helm/${os_arch}/helm "$HELM_BINARY_PATH/helm-$VERSION"
     rm -r /tmp/helm
 
     if [[ -L "$HELM_BINARY_PATH/helm" ]]
@@ -136,7 +136,7 @@ function helmenv_uninstall(){
 }
 
 function helmenv_list(){
-    installed_versions="$(find "${HELM_BINARY_PATH}" -name '*helm*' -printf '%f\n' | sed -r 's/helm-?//' | sed '/^$/d' | sort --version-sort)"
+    installed_versions="$(find "${HELM_BINARY_PATH}"/ -name '*helm-*' -printf '%f\n' | sed -r 's/helm-?//' | sed '/^$/d' | sort --version-sort)"
     echo "$installed_versions"
 }
 
@@ -149,7 +149,7 @@ function helmenv_use(){
         return 1
     fi
 
-    installed="$(find "$HELM_BINARY_PATH" -name "*$VERSION*")"
+    installed="$(find "$HELM_BINARY_PATH"/ -name "*$VERSION*")"
 
     if [[ -z "$installed" ]]
     then
