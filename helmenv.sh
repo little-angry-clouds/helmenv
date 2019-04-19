@@ -54,6 +54,10 @@ function helmenv_list_remote () {
 function helmenv_install () {
     VERSION="$1"
 
+    if [[ -z "$VERSION" ]] && [[ -t 1 && -z ${HELMENV_IGNORE_FZF:-} && "$(type fzf &>/dev/null; echo $?)" -eq 0 ]]; then
+        VERSION=$(helmenv_list_remote | fzf)
+    fi
+
     if [[ -z "$VERSION" ]]
     then
         echo "You must specify a version!"
@@ -116,6 +120,10 @@ function helmenv_install () {
 function helmenv_uninstall(){
     VERSION="$1"
 
+    if [[ -z "$VERSION" ]] && [[ -t 1 && -z ${HELMENV_IGNORE_FZF:-} && "$(type fzf &>/dev/null; echo $?)" -eq 0 ]]; then
+        VERSION=$(helmenv_list | fzf)
+    fi
+
     if [[ -z "$VERSION" ]]
     then
         echo "You must specify a version!"
@@ -142,6 +150,10 @@ function helmenv_list(){
 
 function helmenv_use(){
     VERSION="$1"
+
+    if [[ -z "$VERSION" ]] && [[ -t 1 && -z ${HELMENV_IGNORE_FZF:-} && "$(type fzf &>/dev/null; echo $?)" -eq 0 ]]; then
+        VERSION=$(helmenv_list | fzf)
+    fi
 
     if [[ -z "$VERSION" ]]
     then
