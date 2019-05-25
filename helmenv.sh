@@ -144,7 +144,7 @@ function helmenv_uninstall(){
 }
 
 function helmenv_list(){
-    installed_versions="$(find "${HELM_BINARY_PATH}"/ -name '*helm-*' -printf '%f\n' | sed -r 's/helm-?//' | sed '/^$/d' | sort --version-sort)"
+    installed_versions="$(find "${HELM_BINARY_PATH}"/ -name '*helm-*' -printf '%f\n' | grep -Eo 'v([0-9]\.?)+$' | sed '/^$/d' | sort --version-sort)"
     echo "$installed_versions"
 }
 
