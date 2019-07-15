@@ -14,14 +14,13 @@ Currently helmenv supports the following OSes
   - Arm64
 
 ## Installation
+### Linux
 1. Check out helmenv into any path (`${HOME}/.helmenv` in the example)
-
 ```bash
 git clone https://github.com/alexppg/helmenv.git ~/.helmenv
 ```
 
 2. Add `~/.bin` to your `$PATH`
-
 ```bash
 echo 'export PATH="$HOME/.bin:$PATH"' >> ~/.bashrc
 # Or
@@ -34,6 +33,35 @@ echo 'source $HOME/.helmenv/helmenv.sh' >> ~/.bashrc
 # Or
 echo 'source $HOME/.helmenv/helmenv.sh' >> ~/.zshrc
 ```
+
+### Mac OS X
+1. Check out helmenv into any path (`${HOME}/.helmenv` in the example)
+```bash
+git clone https://github.com/alexppg/helmenv.git ~/.helmenv
+```
+
+2. Delete helmenv.sh and then rename helmenv_mac.sh to helmenv.sh.\
+Navigate to the repository after cloning it and rename the mac script
+```bash
+cd ${HOME}/.helmenv
+rm helmenv.sh
+mv helmenv_mac.sh helmenv.sh
+```
+
+3. Add `~/.bin` to your `$PATH`
+```bash
+echo 'export PATH="$HOME/.bin:$PATH"' >> ~/.bashrc
+# Or
+echo 'export PATH="$HOME/.bin:$PATH"' >> ~/.zshrc
+```
+
+4. Source the script
+```bash
+echo 'source $HOME/.helmenv/helmenv.sh' >> ~/.bashrc
+# Or
+echo 'source $HOME/.helmenv/helmenv.sh' >> ~/.zshrc
+```
+
 
 ## Usage
 ### helmenv help
