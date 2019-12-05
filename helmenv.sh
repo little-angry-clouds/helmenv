@@ -17,7 +17,7 @@ function _helmenv_get_so_and_arch(){
     local _arch
 
     _uname="$(uname -s)"
-    _arch="$(arch)"
+    _arch="$(uname -m)"
 
     case "${_uname}" in
         Linux)  machine=linux;;
