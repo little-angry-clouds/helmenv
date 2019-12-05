@@ -77,7 +77,12 @@ function helmenv_install () {
         return 1
     fi
 
-    url="https://storage.googleapis.com/kubernetes-helm/helm-$VERSION-$os_arch.tar.gz"
+    if [[ $VERSION == v3* ]]
+    then
+        url="https://get.helm.sh/helm-$VERSION-$os_arch.tar.gz"
+    else
+        url="https://storage.googleapis.com/kubernetes-helm/helm-$VERSION-$os_arch.tar.gz"
+    fi
     echo "Downloading binary..."
     curl -s -L -o "/tmp/helm-$VERSION.tar.gz" "$url"
 
@@ -109,11 +114,14 @@ function helmenv_install () {
         helmenv_use "$VERSION"
     fi
 
-    if [[ "$overwrite" == "y" ]]
+    if [[ $VERSION != v3* ]]
     then
-        "$HELM_BINARY_PATH/helm-$VERSION" init --client-only
-    else
-        HELM_HOME="$HOME/.helm/$VERSION" "$HELM_BINARY_PATH/helm-$VERSION" init --client-only
+       if [[ "$overwrite" == "y" ]]
+       then
+           "$HELM_BINARY_PATH/helm-$VERSION" init --client-only
+       else
+           HELM_HOME="$HOME/.helm/$VERSION" "$HELM_BINARY_PATH/helm-$VERSION" init --client-only
+       fi
     fi
 }
 
