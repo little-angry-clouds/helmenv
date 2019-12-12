@@ -10,9 +10,17 @@ function _helmenv_test_requirements {
          echo "You must install jq"
          exit 1
     fi
+
+    # macOS: verify greadlink installed
+    if [[ "$HELM_OS_ARCH" == "darwin"* ]]; then
+        if [[ ! "$(command -v greadlink)" ]]; then
+            echo "helmenv: You must install coreutils"
+            exit 0
+        fi
+    fi
 }
 
-function _helmenv_get_so_and_arch(){
+function _helmenv_get_os_and_arch(){
     local _uname
     local _arch
 
@@ -70,18 +78,17 @@ function helmenv_install () {
         return 0
     fi
 
-    os_arch=$(_helmenv_get_so_and_arch)
-    if [[ "$os_arch" = *"UNKNOWN"* ]]
+    if [[ "$HELM_OS_ARCH" = *"UNKNOWN"* ]]
     then
-        echo "The architecture and/or the SO is not supported: $os_arch"
+        echo "The architecture and/or the OS is not supported: $HELM_OS_ARCH"
         return 1
     fi
 
     if [[ $VERSION == v3* ]]
     then
-        url="https://get.helm.sh/helm-$VERSION-$os_arch.tar.gz"
+        url="https://get.helm.sh/helm-$VERSION-$HELM_OS_ARCH.tar.gz"
     else
-        url="https://storage.googleapis.com/kubernetes-helm/helm-$VERSION-$os_arch.tar.gz"
+        url="https://storage.googleapis.com/kubernetes-helm/helm-$VERSION-$HELM_OS_ARCH.tar.gz"
     fi
     echo "Downloading binary..."
     curl -s -L -o "/tmp/helm-$VERSION.tar.gz" "$url"
@@ -100,7 +107,12 @@ function helmenv_install () {
 
     if [[ -L "$HELM_BINARY_PATH/helm" ]]
     then
-        actual_version="$(basename "$(readlink -f "$HELM_BINARY_PATH/helm")")"
+        if [[ "$HELM_OS_ARCH" == "darwin"* ]]
+        then
+            actual_version="$(basename "$(greadlink -f "$HELM_BINARY_PATH/helm")")"
+        else
+            actual_version="$(basename "$(readlink -f "$HELM_BINARY_PATH/helm")")"
+        fi
         echo "helm is pointing to the ${actual_version//helm-} version"
         echo "Do you want to overwrite it? (y/n)"
         read -r overwrite
@@ -152,7 +164,7 @@ function helmenv_uninstall(){
 }
 
 function helmenv_list(){
-    installed_versions="$(find "${HELM_BINARY_PATH}"/ -name '*helm-*' -printf '%f\n' | grep -Eo 'v([0-9]\.?)+$' | sed '/^$/d' | sort --version-sort)"
+    installed_versions="$(find "${HELM_BINARY_PATH}"/ -name '*helm-*' -exec basename {} \; | grep -Eo 'v([0-9]\.?)+$' | sed '/^$/d' | sort --version-sort)"
     echo "$installed_versions"
 }
 
@@ -177,7 +189,12 @@ function helmenv_use(){
         return 1
     fi
 
-    actual_link="$(readlink -f "$HELM_BINARY_PATH/helm")"
+    if [[ "$HELM_OS_ARCH" == "darwin"* ]]
+    then
+        actual_link="$(greadlink -f "$HELM_BINARY_PATH/helm")"
+    else
+        actual_link="$(readlink -f "$HELM_BINARY_PATH/helm")"
+    fi
 
     if [[ "$actual_link" =~ $VERSION ]]
     then
@@ -200,19 +217,31 @@ function helmenv_help() {
 }
 
 function helmenv_init () {
-    HELM_BINARY_PATH="$HOME/.bin"
-    ACTUAL_VERSION="$(basename "$(readlink -e "$HELM_BINARY_PATH/helm")")"
-    HELM_HOME="$HOME/.helm/${ACTUAL_VERSION//helm-}"
+    HELM_BINARY_PATH="${HELM_BINARY_PATH:-$HOME/.helm/bin}"
+    HELM_OS_ARCH="$(_helmenv_get_os_and_arch)"
+    if [[ "$HELM_OS_ARCH" == "darwin"* ]]; then
+        ACTUAL_VERSION="$(basename "$(greadlink -e "$HELM_BINARY_PATH/helm")")"
+    else
+        ACTUAL_VERSION="$(basename "$(readlink -e "$HELM_BINARY_PATH/helm")")"
+    fi
+    HELM_HOME="${HELM_HOME:-$HOME/.helm/${ACTUAL_VERSION//helm-}}"
 
     export HELM_HOME
+    export HELM_OS_ARCH
 
     if [[ ! -e "$HELM_HOME" ]]
     then
-        mkdir "$HELM_HOME"
+        mkdir -p "$HELM_HOME"
     fi
     if [[ ! -e "$HELM_BINARY_PATH" ]]
     then
-        mkdir "$HELM_BINARY_PATH"
+        mkdir -p "$HELM_BINARY_PATH"
+    fi
+
+    # Only add HELM_BINARY_PATH to PATH if it's not already part of the PATH
+    if [[ "$PATH" != *"$HELM_BINARY_PATH"* ]]
+    then
+        export PATH="$HELM_BINARY_PATH:$PATH"
     fi
 }
 

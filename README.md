@@ -6,7 +6,7 @@ points to `$HOME/.helm/`, to the path `$HOME/.helm/$version`.
 
 ## Support
 Currently helmenv supports the following OSes
-- Mac OS X (64bit) - not really tested
+- macOS (64bit)
 - Linux
   - 32bit
   - 64bit
@@ -14,25 +14,25 @@ Currently helmenv supports the following OSes
   - Arm64
 
 ## Installation
-1. Check out helmenv into any path (`${HOME}/.helmenv` in the example)
+1. Check out helmenv into any path (`${HOME}/.helm` in the example)
 
 ```bash
-git clone https://github.com/alexppg/helmenv.git ~/.helmenv
+git clone https://github.com/alexppg/helmenv.git ~/.helm
 ```
 
-2. Add `~/.bin` to your `$PATH`
+2. Add `~/.helm` to your `$PATH`
 
 ```bash
-echo 'export PATH="$HOME/.bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="$HOME/.helm:$PATH"' >> ~/.bashrc
 # Or
-echo 'export PATH="$HOME/.bin:$PATH"' >> ~/.zshrc
+echo 'export PATH="$HOME/.helm:$PATH"' >> ~/.zshrc
 ```
 
 3. Source the script
 ```bash
-echo 'source $HOME/.helmenv/helmenv.sh' >> ~/.bashrc
+echo 'source $HOME/.helm/helmenv.sh' >> ~/.bashrc
 # Or
-echo 'source $HOME/.helmenv/helmenv.sh' >> ~/.zshrc
+echo 'source $HOME/.helm/helmenv.sh' >> ~/.zshrc
 ```
 
 ## Usage
@@ -107,8 +107,7 @@ The version v2.12.3 is uninstalled!
 ```
 
 ## Related Projects
-There's a similar project for managing [kubectl
-versions](https://github.com/alexppg/kbenv).
+There's a similar project for managing [kubectl versions](https://github.com/alexppg/kbenv).
 
 ## License
 GPL3
