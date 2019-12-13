@@ -3,12 +3,12 @@
 function _helmenv_test_requirements {
     if [[ ! "$(command -v curl)" ]]
     then
-        echo "You must install curl"
-        exit 1
+        echo "helmenv: You must install curl"
+        exit 0
     elif [[ ! "$(command -v jq)" ]]
     then
-         echo "You must install jq"
-         exit 1
+         echo "helmenv: You must install jq"
+         exit 0
     fi
 
     # macOS: verify greadlink installed
