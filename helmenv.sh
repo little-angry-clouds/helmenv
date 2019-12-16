@@ -102,7 +102,7 @@ function helmenv_install () {
 
     mkdir -p /tmp/helm
     tar -zxf "/tmp/helm-$VERSION.tar.gz" -C /tmp/helm
-    mv /tmp/helm/${os_arch}/helm "$HELM_BINARY_PATH/helm-$VERSION"
+    mv /tmp/helm/${HELM_OS_ARCH}/helm "$HELM_BINARY_PATH/helm-$VERSION"
     rm -r /tmp/helm
 
     if [[ -L "$HELM_BINARY_PATH/helm" ]]
