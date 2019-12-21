@@ -221,7 +221,6 @@ function helmenv_init () {
     HELM_OS_ARCH="$(_helmenv_get_os_and_arch)"
     _helmenv_test_requirements
     [[ $? = 1 ]] && return 1
-    echo "rc: $?"
     if [[ "$HELM_OS_ARCH" == "darwin"* ]]; then
         ACTUAL_VERSION="$(basename "$(greadlink -e "$HELM_BINARY_PATH/helm")")"
     else
