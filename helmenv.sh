@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 function _helmenv_test_requirements {
+    local _uname
+
+    _uname="$(uname -s)"
+
     if [[ ! "$(command -v curl)" ]]
     then
         echo "You must install curl"
@@ -9,6 +13,10 @@ function _helmenv_test_requirements {
     then
          echo "You must install jq"
          exit 1
+    elif [[ "$machine" == "darwin" && ! "$(command -v greadlink)" ]]
+    then
+        echo "You must install coreutils"
+        exit 1
     fi
 }
 
@@ -52,6 +60,15 @@ function helmenv_list_remote () {
 }
 
 function helmenv_install () {
+    local _uname
+
+    _uname=$(uname -s)
+
+    case "${_uname}" in
+        Linux)  READLINK=readlink;;
+        Darwin) READLINK=greadlink;;
+    esac
+
     VERSION="$1"
 
     if [[ -z "$VERSION" ]] && [[ -t 1 && -z ${HELMENV_IGNORE_FZF:-} && "$(type fzf &>/dev/null; echo $?)" -eq 0 ]]; then
@@ -100,7 +117,7 @@ function helmenv_install () {
 
     if [[ -L "$HELM_BINARY_PATH/helm" ]]
     then
-        actual_version="$(basename "$(readlink -f "$HELM_BINARY_PATH/helm")")"
+        actual_version="$(basename "$($READLINK -f "$HELM_BINARY_PATH/helm")")"
         echo "helm is pointing to the ${actual_version//helm-} version"
         echo "Do you want to overwrite it? (y/n)"
         read -r overwrite
@@ -157,6 +174,15 @@ function helmenv_list(){
 }
 
 function helmenv_use(){
+    local _uname
+
+    _uname=$(uname -s)
+
+    case "${_uname}" in
+        Linux)  READLINK=readlink;;
+        Darwin) READLINK=greadlink;;
+    esac
+
     VERSION="$1"
 
     if [[ -z "$VERSION" ]] && [[ -t 1 && -z ${HELMENV_IGNORE_FZF:-} && "$(type fzf &>/dev/null; echo $?)" -eq 0 ]]; then
@@ -177,7 +203,7 @@ function helmenv_use(){
         return 1
     fi
 
-    actual_link="$(readlink -f "$HELM_BINARY_PATH/helm")"
+    actual_link="$($READLINK -f "$HELM_BINARY_PATH/helm")"
 
     if [[ "$actual_link" =~ $VERSION ]]
     then
@@ -200,8 +226,17 @@ function helmenv_help() {
 }
 
 function helmenv_init () {
+    local _uname
+
+    _uname=$(uname -s)
+
+    case "${_uname}" in
+        Linux)  READLINK=readlink;;
+        Darwin) READLINK=greadlink;;
+    esac
+
     HELM_BINARY_PATH="$HOME/.bin"
-    ACTUAL_VERSION="$(basename "$(readlink -e "$HELM_BINARY_PATH/helm")")"
+    ACTUAL_VERSION="$(basename "$($READLINK -e "$HELM_BINARY_PATH/helm")")"
     HELM_HOME="$HOME/.helm/${ACTUAL_VERSION//helm-}"
 
     export HELM_HOME
