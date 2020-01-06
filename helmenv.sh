@@ -4,18 +4,18 @@ function _helmenv_test_requirements {
     if [[ ! "$(command -v curl)" ]]
     then
         echo "helmenv: You must install curl"
-        exit 0
+        return 1
     elif [[ ! "$(command -v jq)" ]]
     then
          echo "helmenv: You must install jq"
-         exit 0
+         return 1
     fi
 
     # macOS: verify greadlink installed
     if [[ "$HELM_OS_ARCH" == "darwin"* ]]; then
         if [[ ! "$(command -v greadlink)" ]]; then
             echo "helmenv: You must install coreutils"
-            exit 0
+            return 1
         fi
     fi
 }
@@ -219,6 +219,8 @@ function helmenv_help() {
 function helmenv_init () {
     HELM_BINARY_PATH="${HELM_BINARY_PATH:-$HOME/.helm/bin}"
     HELM_OS_ARCH="$(_helmenv_get_os_and_arch)"
+    _helmenv_test_requirements
+    [[ $? = 1 ]] && return 1
     if [[ "$HELM_OS_ARCH" == "darwin"* ]]; then
         ACTUAL_VERSION="$(basename "$(greadlink -e "$HELM_BINARY_PATH/helm")")"
     else
@@ -250,6 +252,7 @@ function helmenv() {
     ACTION_PARAMETER="$2"
 
     _helmenv_test_requirements
+    [[ $? = 1 ]] && return 1
 
     case "${ACTION}" in
         "list-remote")
