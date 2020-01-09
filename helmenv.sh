@@ -7,8 +7,8 @@ function _helmenv_test_requirements {
         exit 1
     elif [[ ! "$(command -v jq)" ]]
     then
-         echo "You must install jq"
-         exit 1
+        echo "You must install jq"
+        exit 1
     fi
 }
 
