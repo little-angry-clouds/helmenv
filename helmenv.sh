@@ -9,7 +9,6 @@ function _helmenv_test_requirements {
     then
         echo "helmenv: You must install jq"
         return 1
-    fi
     elif [[ ! "$(command -v file)" ]]
     then
         echo "helmenv: You must install file"
