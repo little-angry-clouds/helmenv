@@ -10,6 +10,11 @@ function _helmenv_test_requirements {
         echo "helmenv: You must install jq"
         return 1
     fi
+    elif [[ ! "$(command -v file)" ]]
+    then
+        echo "helmenv: You must install file"
+        return 1
+    fi
 
     # macOS: verify greadlink installed
     if [[ "$HELM_OS_ARCH" == "darwin"* ]]; then
