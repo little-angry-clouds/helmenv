@@ -63,12 +63,12 @@ v2.0.2
 ```
 
 ### helmenv list
-List installed versions:
+List installed versions, and show an asterisk after the currently active version:
 ```bash
 $ helmenv list
 v2.10.0
 v2.11.0
-v2.12.3
+v2.12.3 *
 ```
 
 ### helmenv install

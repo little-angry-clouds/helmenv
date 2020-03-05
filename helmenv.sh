@@ -53,6 +53,22 @@ function _helmenv_get_os_and_arch(){
 
     echo "$machine-$architecture"
 }
+function _helmenv_get_inuse_version() {
+    if [[ ! -L "$HELM_BINARY_PATH/helm" ]]
+    then
+        echo ""
+        return 0
+    fi
+
+    if [[ "$HELM_OS_ARCH" == "darwin"* ]]
+    then
+        inuse_version="$(basename "$(greadlink -f "$HELM_BINARY_PATH/helm")")"
+    else
+        inuse_version="$(basename "$(readlink -f "$HELM_BINARY_PATH/helm")")"
+    fi
+
+    echo "${inuse_version//helm-/}"
+}
 
 function helmenv_list_remote () {
     echo "Fetching versions..."
@@ -169,6 +185,13 @@ function helmenv_uninstall(){
 
 function helmenv_list(){
     installed_versions="$(find "${HELM_BINARY_PATH}"/ -name '*helm-*' -exec basename {} \; | grep -Eo 'v([0-9]\.?)+$' | sed '/^$/d' | sort --version-sort)"
+
+    local inuse_version="$(_helmenv_get_inuse_version)"
+    if [[ -n "$inuse_version" ]]
+    then
+        installed_versions="$(echo "$installed_versions" | sed "s/${inuse_version}/${inuse_version} \*/")"
+    fi
+
     echo "$installed_versions"
 }
 
