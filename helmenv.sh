@@ -104,7 +104,7 @@ function helmenv_install () {
         return 1
     fi
 
-    if [[ $VERSION == v3* ]]
+    if [[ $VERSION == "v3"* ]]
     then
         url="https://get.helm.sh/helm-$VERSION-$HELM_OS_ARCH.tar.gz"
     else
@@ -146,7 +146,7 @@ function helmenv_install () {
         helmenv_use "$VERSION"
     fi
 
-    if [[ $VERSION != v3* ]]
+    if [[ $VERSION != "v3"* ]]
     then
        if [[ "$overwrite" == "y" ]]
        then
