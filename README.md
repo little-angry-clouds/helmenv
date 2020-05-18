@@ -1,4 +1,13 @@
 # helmenv
+
+**DISCLAIMER**
+This project is discontinued, but there's a better version
+[here](https://github.com/little-angry-clouds/kubernetes-binaries-managers/tree/master/cmd/helmenv).
+You may check the reasons behind that decision
+[here](https://github.com/little-angry-clouds/kubernetes-binaries-managers/tree/master/cmd/helmenv#why-migrate-from-bash-to-go).
+And you can see how to migrate to the new project
+[here](https://github.com/little-angry-clouds/kubernetes-binaries-managers/tree/master/cmd/helmenv#how-to-migrate-from-the-bash-version).
+
 [Helm](https://helm.sh) version manager inspired by
 [tfenv](https://github.com/tfutils/tfenv/). It also manages the plugins, charts
 and others. It basically assigns the variable `HELM_HOME`, which by default
